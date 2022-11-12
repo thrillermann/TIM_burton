@@ -22,20 +22,22 @@ void init (LISTA *listona) {
     (*listona).curaux=NULL;
 }
 
-void insertar (LISTA *listona, Equipo equi) {
-    NODO* nodito=(NODO*)malloc(sizeof(NODO));
+void insertar (LISTA *lista_ing, Equipo equipo_ing) {
+    NODO *nuevo_nodo=(NODO*)malloc(sizeof(NODO));
+    NODO *aux;
+    nuevo_nodo->seleccion = equipo_ing;
 
-    nodito->seleccion=equi;
+    if (is_empty(*lista_ing)==1) {
+        lista_ing->acc = nuevo_nodo;
+        lista_ing->cur = nuevo_nodo;
+        lista_ing->curaux = nuevo_nodo;
+    } 
 
-    if ((*listona).acc==(*listona).cur) {
-        (*nodito).ps=(*listona).cur;
-        (*listona).acc=nodito;
-        (*listona).cur=nodito;
-        (*listona).curaux=(*listona).cur;
-    } else {
-        (*listona).curaux->ps=nodito;
-        (*nodito).ps=(*listona).cur->ps;
-        (*listona).cur=nodito;
+    else {
+        lista_ing->cur->ps = nuevo_nodo;
+        aux = lista_ing->cur->ps;
+        lista_ing->curaux = lista_ing->cur;
+        lista_ing->cur = aux;
     }
 }
 
@@ -60,8 +62,8 @@ void reset (LISTA *listonaaa) {
 }
 
 void avanzar (LISTA *listona) {
-    (*listona).curaux=(*listona).cur;
-    (*listona).cur=(*listona).cur->ps;
+    listona->curaux = listona->cur;
+    listona->cur = listona->cur->ps;
 }
 
 int fuera (LISTA listinha) {
@@ -86,7 +88,7 @@ int is_full (void) {
 }
 
 int is_empty(LISTA lista_ing){
-    if (lista_ing.cur == NULL) return 1;
+    if (lista_ing.acc == NULL) return 1;
     else return 0;
 }
 
