@@ -14,7 +14,7 @@ typedef struct  {
 typedef struct {
     int goles_favor;
     int goles_contra;
-    int puntaje_parcial;
+    int puntaje_parcial; /*si el equipo esta en fase de grupos puntaje_parcial==puntaje actual, de lo contrario, 1=gano el partido o 0=perdio*/
 }Resultados;
 
 typedef struct{
@@ -26,7 +26,7 @@ typedef struct {
     char dt[50];
     char capitan[20];
     char grupo;
-    int puntaje_actual;
+    int puntaje_actual; /*puntaje de la fase de grupos*/
     Artillero goleador;
     int fase; /*0=fase grup, 1=8avos, 2=4tos, 3=semi, 4=final*/
     Resultados resultados_fase[5];
@@ -56,8 +56,9 @@ void cargar_grupo(Equipo *equipo,char grupo){
     (*equipo).grupo=grupo;
 }
 
-void cargar_puntaje_actual (Equipo *equi, int cargado) {
-    (*equi).puntaje_actual=cargado;
+void cargar_puntaje_actual (Equipo *equi, int cargado){
+    equi->puntaje_actual=cargado;
+    equi->resultados_fase[0].puntaje_parcial = cargado; /*carga automaticamente dentro de los resultados de la fase de grupo*/
 }
 
 void cargar_goleador_struct (Equipo *equi, Artillero arti) {
@@ -70,6 +71,10 @@ void cargar_fase (Equipo *equi, int fase_actual) {
 
 void cargar_resultados_fase (Equipo *equi, int fase, Resultados cantidades) {
     (*equi).resultados_fase[fase]=cantidades;
+}
+
+void cargar_resultados_fase_puntaje_parcial(Equipo *equi, int fase_del_equipo, int puntaje_parcial_intro){
+    equi->resultados_fase[fase_del_equipo].puntaje_parcial = puntaje_parcial_intro;
 }
 
 void cargar_partidos_jugados (Equipo *equi, int cant_jugados) {
@@ -107,7 +112,8 @@ void init_equipo(Equipo *equipo_intro){
 /*AC� EMPIEZAN LAS FUNCIONES DE MODIFICAR CAMPOS------------------------------------------------------------------------*/
 
 void modificar_puntaje_actual (Equipo *equi, int cargado) {
-    (*equi).puntaje_actual=cargado;
+    equi->puntaje_actual=cargado;
+    equi->resultados_fase[0].puntaje_parcial = cargado; /*carga automaticamente dentro de los resultados de la fase de grupo*/
 }
 
 void modificar_fase_goleador (Equipo *equi, Artillero arti) {
@@ -120,6 +126,18 @@ void modificar_fase (Equipo *equi, int fase_actual) {
 
 void modificar_resultados_fase (Equipo *equi, int fase, Resultados cantidades) {
     (*equi).resultados_fase[fase]=cantidades;
+}
+
+void modificar_resultados_fase_GF(Equipo *equi, int fase, int goles_a_favor_intro) {
+    equi->resultados_fase[fase].goles_favor = goles_a_favor_intro;
+}
+
+void modificar_resultados_fase_GC(Equipo *equi, int fase, int goles_en_contra_intro) {
+    equi->resultados_fase[fase].goles_contra = goles_en_contra_intro;
+}
+
+void modificar_resultados_fase_ptj(Equipo *equi, int fase, int ptj_intro) {
+    equi->resultados_fase[fase].puntaje_parcial = ptj_intro;
 }
 
 void modificar_fecha (Equipo *equi, Fecha fecha) {
