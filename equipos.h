@@ -14,7 +14,7 @@ typedef struct  {
 typedef struct {
     int goles_favor;
     int goles_contra;
-    int puntaje_parcial;
+    int puntaje_parcial; /*Si la fase> f.grupos, entonces 1=gano, 0=perdio, 2=pendiente*/
 }Resultados;
 
 typedef struct{
@@ -56,8 +56,9 @@ void cargar_grupo(Equipo *equipo,char grupo){
     (*equipo).grupo=grupo;
 }
 
-void cargar_puntaje_actual (Equipo *equi, int cargado) {
-    (*equi).puntaje_actual=cargado;
+void cargar_puntaje_actual (Equipo *equipo, int cargado) {
+    equipo->puntaje_actual=cargado;
+    equipo->resultados_fase[0].puntaje_parcial=cargado;
 }
 
 void cargar_goleador_struct (Equipo *equi, Artillero arti) {
@@ -96,7 +97,7 @@ void init_equipo(Equipo *equipo_intro){
     for(i=0; i<=5; ++i){
          equipo_intro->resultados_fase[i].goles_favor=0;
          equipo_intro->resultados_fase[i].goles_contra=0;
-         equipo_intro->resultados_fase[i].puntaje_parcial=0;
+         equipo_intro->resultados_fase[i].puntaje_parcial=2;
     }
     equipo_intro->fecha_actualizada=undef_fecha;
     
@@ -106,8 +107,9 @@ void init_equipo(Equipo *equipo_intro){
 
 /*AC� EMPIEZAN LAS FUNCIONES DE MODIFICAR CAMPOS------------------------------------------------------------------------*/
 
-void modificar_puntaje_actual (Equipo *equi, int cargado) {
-    (*equi).puntaje_actual=cargado;
+void modificar_puntaje_actual (Equipo *equipo, int cargado) {
+    equipo->puntaje_actual=cargado;
+    equipo->resultados_fase[0].puntaje_parcial=cargado;
 }
 
 void modificar_fase_goleador (Equipo *equi, Artillero arti) {
@@ -266,3 +268,6 @@ void cargar_goleador (Equipo *equi, char ape, int cant_goles) {
 }*/
 
 #endif // EQUIPOS_H_INCLUDED
+
+
+
