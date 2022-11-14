@@ -85,6 +85,12 @@ void cargar_partidos_empatados (Equipo *equi, int cant_empatados) {
     (*equi).partidos_empatados=cant_empatados;
 }
 
+void cargar_fecha (Equipo *equi,int dia,int mes,int anio){
+    (*equi).fecha_actualizada.dia=dia;
+    (*equi).fecha_actualizada.mes=mes;
+    (*equi).fecha_actualizada.anio=anio;
+}
+
 void init_equipo(Equipo *equipo_intro){
     int i;
     Equipo undefined={"sin nombre", "sin nombre", 'Z', 0, 1, 0, 0, 0, 0, 0, 0};
