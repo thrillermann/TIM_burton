@@ -26,7 +26,7 @@ int main(){
         printf("\n(8) Mostrar selecciones por fase");
         printf("\n(9) Mostrar goleadores por orden alfabetico");
         printf("\n(10) Mostrar goleadores por cantidad de goles");
-        printf("\n(11) Exportar seleccion");
+        printf("\n(11) Exportar resultados de fase de una seleccion");
         printf("\n(12) Importar seleccion");
         printf("\n(13) Salir");
         printf("\n - Resp: ");
@@ -46,6 +46,9 @@ int main(){
                 scanf("%[^\n]s", pais_ing);
                 if (buscar_pais_en_lista(&conj_selecciones, pais_ing)!=1){
                     printf("\n no se encontro...");
+                    printf("\n Pulse para volver al menu...");
+                    fflush(stdin);
+                    getchar();
                 }
                 else{
                     borrar_seleccion(&conj_selecciones); 
@@ -53,7 +56,19 @@ int main(){
                 break;
             }
             case (4):{
-                mod_fase_y_estadisticas(&conj_selecciones); break;
+                printf("\n Ingrese el nombre de la seleccion: ");
+                fflush(stdin);
+                scanf("%[^\n]s", pais_ing);
+                if (buscar_pais_en_lista(&conj_selecciones, pais_ing)!=1){
+                    printf("\n no se encontro...");
+                    printf("\n Pulse para volver al menu...");
+                    fflush(stdin);
+                    getchar();
+                }
+                else{
+                    mod_fase_y_estadisticas(&conj_selecciones);
+                }
+                break;
             }
             case (5):{
                 printf("\n Ingrese el nombre de la seleccion: ");
@@ -96,7 +111,19 @@ int main(){
                 mostrar_goleadores_ord_x_goles(&conj_selecciones); break;
             }
             case (11):{
-                printf("\n en mantenimiento..."); break;
+                printf("\n Ingrese el nombre de la seleccion: ");
+                fflush(stdin);
+                scanf("%[^\n]s", pais_ing);
+                if (buscar_pais_en_lista(&conj_selecciones, pais_ing)!=1){
+                    printf("\n no se encontro...");
+                    printf("\n Pulse para volver al menu...");
+                    fflush(stdin);
+                    getchar();
+                }
+                else{
+                    exportar_resultados_fase(conj_selecciones);
+                }
+                break;
             }
             case (12):{
                 importar_seleccion(&conj_selecciones); break;
@@ -422,11 +449,11 @@ void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invoca
     if (conj_selecciones->cur->seleccion.fase==0) {printf("\n\t\t * Puntaje parcial: %d", mostrar_resultados_fase_punt_parcial(conj_selecciones->cur->seleccion, 0));}
     printf("\n\t\t * Gol/es a favor: %d", mostrar_resultados_fase_gfav(conj_selecciones->cur->seleccion, conj_selecciones->cur->seleccion.fase));
     printf("\n\t\t * Gol/es en contra: %d\n", mostrar_resultados_fase_gcon(conj_selecciones->cur->seleccion, conj_selecciones->cur->seleccion.fase));
-
+    printf("\n\t\t * Partidos jugados: %d\n", mostrar_partidos_jugados(conj_selecciones->cur->seleccion));
+    
     printf("\n - A continuacion actualice los datos de la fase... ");
     if (conj_selecciones->cur->seleccion.fase==0){
         
-
         printf("\n + Ingrese puntaje parcial: ");
         resp_check = scanf("%d", &datos_ing);
         while (datos_ing<0 || datos_ing>9 || resp_check!=1){
@@ -437,10 +464,11 @@ void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invoca
         }
         modificar_puntaje_actual(&conj_selecciones->cur->seleccion, datos_ing);  
     }
+
     
-    printf("\n + Partidos Jugados: ");
+    printf("\n + Partidos Jugados (desde el comienzo de la copa): ");
     resp_check = scanf("%d", &p_jugados);
-    while(p_jugados<0 || p_jugados>3 || 1 != resp_check){
+    while(p_jugados<0 || p_jugados>7 || 1 != resp_check){
         fflush(stdin);
         printf("\n\a # Respuesta invalida");
         if(p_jugados>7 && 1 == resp_check){
@@ -491,7 +519,7 @@ void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invoca
     }
     modificar_partidos_empatados(&conj_selecciones->cur->seleccion, p_empatados);
 
-    printf("\n + Ingrese los goles a favor: ");
+    printf("\n + Ingrese los goles a favor (de la fase en cuestion): ");
     resp_check = scanf("%d", &datos_ing);
     while (datos_ing<0 || resp_check!=1){
         fflush(stdin);
@@ -501,7 +529,7 @@ void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invoca
     }
     modificar_resultados_fase_GF(&conj_selecciones->cur->seleccion, conj_selecciones->cur->seleccion.fase, datos_ing);
 
-    printf("\n + Ingrese los goles en contra: ");
+    printf("\n + Ingrese los goles en contra (de la fase en cuestion): ");
     resp_check = scanf("%d", &datos_ing);
     while (datos_ing<0 || resp_check!=1){
         fflush(stdin);
@@ -522,6 +550,10 @@ void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invoca
         printf("\n\n\t (0) = Fase de grupos, (1) = 8avos de final, (2) = 4tos de final, (3) Semifinal, (4) = Final\n");
         printf("\n   + Resp: ");
         resp_check = scanf("%d", &datos_ing);
+    }
+
+    if (conj_selecciones->cur->seleccion.fase>0){
+        modificar_resultados_fase_ptj(&conj_selecciones->cur->seleccion, conj_selecciones->cur->seleccion.fase, 1); /* Si el equipo no esta en fase de grupos, y actualizamos su fase, quiere decir que que gano y avanzo*/
     }
 
     cant_fases_avanzadas = datos_ing - conj_selecciones->cur->seleccion.fase;
@@ -599,6 +631,102 @@ void importar_seleccion(LISTA *conj_selecciones){ /*funcion m*/
     printf("\n\n - Pulse una tecla para volver al menu...");
     fflush(stdin);
     getchar();
+}
+
+void exportar_resultados_fase(LISTA conj_selecciones){
+    FILE *seleccion_resultados_export;
+    char nombre_del_archivo[pais_nomb_max];
+    int i;
+
+    strcpy(nombre_del_archivo, mostrar_pais(conj_selecciones.cur->seleccion));
+    strcat(nombre_del_archivo,"_RESULTADOS_EXPORT.txt");
+
+    system("cls");
+    printf("\n # # #   E X P O R T A R   R E S U L T A D O S   D E   F A S E   # # #\n");
+
+    seleccion_resultados_export = fopen(nombre_del_archivo, "w");
+    for (i=0; i<=mostrar_fase(conj_selecciones.cur->seleccion); ++i){
+        switch(i){
+            case (0):{
+                fprintf(seleccion_resultados_export, " * Fase: Grupos, ");
+                fprintf(seleccion_resultados_export, "Pto/s: %d ", mostrar_puntaje_actual(conj_selecciones.cur->seleccion));
+                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                break;
+            }
+            case (1):{
+                fprintf(seleccion_resultados_export, " * Fase: 8avos, ");
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                }
+                
+                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                break;
+            }
+            case (2):{
+                fprintf(seleccion_resultados_export, " * Fase: 4tos, ");
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                }
+
+                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                break;
+            }
+            case (3):{
+                fprintf(seleccion_resultados_export, " * Fase: Semifinal, ");
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                }
+
+                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                break;
+            }
+            case (4):{
+                fprintf(seleccion_resultados_export, " * Fase: Final, ");
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                }
+                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                }
+
+                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+            }
+        }
+    }
+    fclose(seleccion_resultados_export);
+
+    printf("\n - Los resultados se guardaron en el archivo \"%s\"", nombre_del_archivo);
+    printf("\n\n Pulse para volver al menu...");
+    fflush(stdin);
+    getchar();
+
+    
 }
 
 void borrar_seleccion(LISTA *conj_selecciones){
