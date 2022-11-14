@@ -18,64 +18,72 @@ int main(){
         printf("\n# # #  M E N U  # # #\n");
         printf("\n(1) Cargar paises");
         printf("\n(2) Modificar puntaje y cant partidos ganados/empatados pais");
-        printf("\n(3) Actualizar fase y actualizar la anterior pais");
-        printf("\n(4) Buscar y mostrar datos de un pais");
-        printf("\n(5) Mostrar todas las selecciones ordenadas por puntaje");
-        printf("\n(6) Mostrar listado de actualizaciones de paises");
-        printf("\n(7) Mostrar selecciones por fase");
-        printf("\n(8) Mostrar goleadores por orden alfabetico");
-        printf("\n(9) Mostrar goleadores por cantidad de goles");
-        printf("\n(10) Exportar pais");
-        printf("\n(11) Importar paises");
+        printf("\n(3) Borrar seleccion");
+        printf("\n(4) Actualizar fase y actualizar la anterior pais");
+        printf("\n(5) Buscar y mostrar datos de un pais");
+        printf("\n(6) Mostrar todas las selecciones ordenadas por puntaje");
+        printf("\n(7) Mostrar listado de actualizaciones de paises");
+        printf("\n(8) Mostrar selecciones por fase");
+        printf("\n(9) Mostrar goleadores por orden alfabetico");
+        printf("\n(10) Mostrar goleadores por cantidad de goles");
+        printf("\n(11) Exportar seleccion");
+        printf("\n(12) Importar seleccion");
         printf("\n - Resp: ");
         scanf("%d", &resp);
 
         switch(resp){
             case (1):{
                 cargar_datos(&conj_selecciones); 
-
-                printf("\n %S", conj_selecciones.acc->seleccion.pais);
-                fflush(stdin);
-                getchar();
                 break;
             }
             case (2):{
-                mod_pts_y_partJGE(&conj_selecciones); break;
+                printf("\n en mantenimiento..."); break;
             }
             case (3):{
                 mod_fase_y_estadisticas(&conj_selecciones); break;
             }
             case (4):{
-                printf("\n Ingrese el nombre de la seleccion: ");
-                fflush(stdin);
-                fgets(pais_ing, pais_nomb_max, stdin);
-                buscar_pais_en_lista(&conj_selecciones, pais_ing);
-                print_seleccion(conj_selecciones); 
-                break;
+                mod_fase_y_estadisticas(&conj_selecciones); break;
             }
             case (5):{
-                printf("\n en mantenimiento..."); break;
+                printf("\n Ingrese el nombre de la seleccion: ");
+                fflush(stdin);
+                scanf("%[^\n]s", pais_ing);
+                if (buscar_pais_en_lista(&conj_selecciones, pais_ing)!=1){
+                    printf("\n no se encontro...");
+                }
+                else{
+                    print_seleccion(conj_selecciones);
+                }
+                printf("\n Pulse para volver al menu...");
+                fflush(stdin);
+                getchar();
+                
+                break;
             }
             case (6):{
                 printf("\n en mantenimiento..."); break;
             }
             case (7):{
+                printf("\n en mantenimiento..."); break;
+            }
+            case (8):{
                 printf("\n Ingrese la fase: ");
                 scanf("%d", &fase);
                 print_selecciones_x_fase(conj_selecciones, fase); 
                 break;
             }
-            case (8):{
+            case (9):{
                 mostrar_goleadores_ord_x_pais(conj_selecciones); break;
             }
-            case (9):{
-                mostrar_goleadores_ord_x_goles(&conj_selecciones); break;
-            }
             case (10):{
-                printf("\n en mantenimiento..."); break;
+                mostrar_goleadores_ord_x_goles(&conj_selecciones); break;
             }
             case (11):{
                 printf("\n en mantenimiento..."); break;
+            }
+            case (12):{
+                importar_seleccion(&conj_selecciones); break;
             }
         }
     }
@@ -84,7 +92,7 @@ int main(){
 int buscar_pais_en_lista(LISTA *conj_selecciones, char seleccion_buscada[]){ //* funcion b modificada*//
     reset(conj_selecciones);
     while(fuera(*conj_selecciones)!=1){
-        if (strcmp(conj_selecciones->cur->seleccion.pais, seleccion_buscada)==0){
+        if (strcmp((mostrar_pais(conj_selecciones->cur->seleccion)), seleccion_buscada)==0){
             return 1;
         }
         else{
@@ -101,20 +109,23 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
     int puntaje_actual_ing, fase_ing, continuar=1, resp_check=0, success;
     while(continuar!=0){
         system("cls");
-        fflush(stdin);
         printf("\n # # #   C A R G A R   S E L E C C I O N E S   # # #\n");
 
         printf("\n + Ingrese la seleccion que desea insertar: ");
-        fgets(pais_ing, pais_nomb_max, stdin);
-
-        
+        fflush(stdin);
+        scanf("%[^\n]s", pais_ing);
         cargar_pais(&equipo, pais_ing);
+
         printf("\n + Apellido y nombre del dt: ");
-        fgets(dt_ing, dt_nomb_max, stdin);
+        fflush(stdin);
+        scanf("%[^\n]s", dt_ing);
         cargar_dt(&equipo, dt_ing);
+
         printf("\n + Apellido del capitan de equipo: ");
+        fflush(stdin);
         scanf("%s", capitan_ing);
         cargar_capitan(&equipo, capitan_ing);
+
         printf("\n + Grupo correspondiente (A,B,C,D,E,F,G,H): ");
         getc(stdin);
         scanf("%c", &grupo_ing);
@@ -125,6 +136,7 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
             scanf("%c", &grupo_ing);
         }
         cargar_grupo(&equipo, grupo_ing);
+
         printf("\n + Ingrese el puntaje actual del equipo: ");
         resp_check = scanf("%d", &puntaje_actual_ing);
         while(puntaje_actual_ing<0 || puntaje_actual_ing>9 || 1 != resp_check){ //* 1 != resp_check es para denegar los caracteres*//
@@ -134,6 +146,7 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
             resp_check = scanf("%d", &puntaje_actual_ing);
         }
         cargar_puntaje_actual(&equipo, puntaje_actual_ing);
+
         printf("\n + Fase actual de la seleccion: ");
         printf("\n\n\t (0) = Fase de grupos, (1) = 8avos de final, (2) = 4tos de final, (3) Semifinal, (4) = Final\n");
         printf("\n + Resp: ");
@@ -150,7 +163,6 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
         
         insertar(conj_selecciones, equipo);
         
-
         system("cls");
         printf("\a # Desea ingresar otro equipo?\n\n\t(1) = si\t(0) = no");
         printf("\n\n + Resp: ");
@@ -205,9 +217,6 @@ int print_seleccion(LISTA lista_equipos){ //* funcion c*//
     printf("\n + Partidos Empatados: %d", lista_equipos.cur->seleccion.partidos_empatados);
     printf("\n + Partidos Perdidos: %d", partidos_perdidos);
 
-    fflush(stdin);
-    printf("\n - Pulse una tecla para volver al menu...");
-    getchar();
     reset(&lista_equipos);
     return 0;
 }
@@ -494,4 +503,44 @@ void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invoca
     printf("\n\a # Datos modificados con exito, pulse para volver al menu...");
     fflush(stdin);
     getchar(); 
+}
+
+void importar_seleccion(LISTA *conj_selecciones){
+    FILE *seleccion_importada;
+    system("cls");
+    printf("\n # # #   I M P O R T A R   S E L E C C I O N   # # #\n");
+    printf("\n\a - Coloque el archivo \"seleccion.txt\" en dentro de la carpeta del programa...");
+    printf("\n Pulse una tecla para continuar...");
+    fflush(stdin);
+    getchar();
+    if (fopen("seleccion.txt", "r")==NULL){
+        printf("\n\a # No se encontro el archivo...");
+    }
+    else{
+        Equipo nueva_seleccion;
+        init_equipo(&nueva_seleccion);
+        seleccion_importada = fopen("seleccion.txt", "r");
+
+        char pais_ing[pais_nomb_max], dt_ing[dt_nomb_max], capitan_ing[cap_nomb_max];
+        int puntaje_ing;
+        
+        fscanf(seleccion_importada, "%s %s %s %d", pais_ing, dt_ing, capitan_ing, &puntaje_ing);
+
+        cargar_pais(&nueva_seleccion, pais_ing);
+        cargar_dt(&nueva_seleccion, dt_ing);
+        cargar_capitan(&nueva_seleccion, capitan_ing);
+        cargar_puntaje_actual(&nueva_seleccion, puntaje_ing);
+
+        insertar(conj_selecciones, nueva_seleccion);
+        printf("\n\a # Datos Importados: ");
+        printf("\n\t * Pais: %s", mostrar_pais(conj_selecciones->cur->seleccion));
+        printf("\n\t * DT: %s", mostrar_dt(conj_selecciones->cur->seleccion));
+        printf("\n\t * Capitan: %s", mostrar_capitan(conj_selecciones->cur->seleccion));
+        printf("\n\t * Puntaje fase de grupos: %d pto/s", mostrar_puntaje_actual(conj_selecciones->cur->seleccion));
+        fclose(seleccion_importada);
+    }
+    printf("\n\n - Pulse una tecla para volver al menu...");
+    fflush(stdin);
+    getchar();
+
 }
