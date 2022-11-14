@@ -1,0 +1,21 @@
+void mostrar_equipos_ordenados (LISTA *conj_selecciones,int puntos){ // funcion f
+
+    Equipo equipo;
+    if (puntos==-1){
+       printf("\nPresione cualquier boton para salir");
+       getchar();
+    }
+    else{
+        if (fuera(*conj_selecciones)==1){
+            reset(&conj_selecciones);
+            mostrar_equipos_ordenados (conj_selecciones,puntos-1);
+        }
+        else{
+            if (mostrar_puntaje_actual(conj_selecciones->cur->seleccion)==puntos){
+                printf("\n + %s : %d",mostrar_pais(conj_selecciones->cur->seleccion),mostrar_puntaje_actual(conj_selecciones->cur->seleccion));
+            }
+            avanzar(&conj_selecciones);
+            mostrar_equipos_ordenados (conj_selecciones,puntos);
+        }
+    }
+}
