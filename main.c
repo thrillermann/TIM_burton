@@ -151,12 +151,19 @@ int buscar_pais_en_lista(LISTA *conj_selecciones, char seleccion_buscada[]){ //*
 void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
     Equipo equipo;
     init_equipo(&equipo);
+    time_t tiempo;
+    struct tm *mitiempo;
+    
     char pais_ing[pais_nomb_max], dt_ing[dt_nomb_max], capitan_ing[cap_nomb_max], grupo_ing;
     int puntaje_actual_ing, fase_ing, continuar=1, resp_check=0, success;
     while(continuar!=0){
         system("cls");
         printf("\n # # #   C A R G A R   S E L E C C I O N E S   # # #\n");
-
+        
+        time(&tiempo);
+        mitiempo=localtime(&tiempo);
+        cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
+        
         printf("\n + Ingrese la seleccion que desea insertar: ");
         fflush(stdin);
         scanf("%[^\n]s", pais_ing);
@@ -352,6 +359,16 @@ void mostrar_goleadores_ord_x_goles(LISTA *conj_selecciones){
 
 void mod_pts_y_partJGE(LISTA *conj_selecciones){ /*funcion g... en la invocacion se le pasa la lista con el cursor con la seleccion que se busco*/
     int pts_fase_grupos, p_jugados, p_ganados, p_empatados, resp_check;
+    
+    Equipo equipo;
+    time_t tiempo;
+    struct tm *mitiempo;
+
+    time(&tiempo);
+    mitiempo=localtime(&tiempo);
+    cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
+
+    
     system("cls");
     printf("\n # # #   M O D I F I C A R   P U N T O S   Y   P A R T I D O S   # # #\n");
     printf("\n # Pais: %s", mostrar_pais(conj_selecciones->cur->seleccion));
@@ -434,6 +451,16 @@ void mod_pts_y_partJGE(LISTA *conj_selecciones){ /*funcion g... en la invocacion
 
 void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invocacion se le pasa la lista con el cursor con la seleccion que se busco*/
     int datos_ing, cant_fases_avanzadas, p_jugados, p_ganados, p_empatados, resp_check;
+    
+    Equipo equipo;
+    time_t tiempo;
+    struct tm *mitiempo;
+
+    time(&tiempo);
+    mitiempo=localtime(&tiempo);
+    cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
+
+    
     system("cls");
     printf("\n # # #   M O D I F I C A C I O N  D E  F A S E   # # #\n");
     printf("\n # Pais: %s", mostrar_pais(conj_selecciones->cur->seleccion));
