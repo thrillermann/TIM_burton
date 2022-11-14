@@ -14,7 +14,7 @@ typedef struct  {
 typedef struct {
     int goles_favor;
     int goles_contra;
-    int puntaje_parcial; /*si el equipo esta en fase de grupos puntaje_parcial==puntaje actual, de lo contrario, 1=gano el partido o 0=perdio*/
+    int puntaje_parcial;
 }Resultados;
 
 typedef struct{
@@ -26,11 +26,11 @@ typedef struct {
     char dt[50];
     char capitan[20];
     char grupo;
-    int puntaje_actual; /*puntaje de la fase de grupos*/
+    int puntaje_actual;
     Artillero goleador;
     int fase; /*0=fase grup, 1=8avos, 2=4tos, 3=semi, 4=final*/
     Resultados resultados_fase[5];
-    Fecha fecha_actualizada; /*control*/
+    Fecha fecha_actualizada; /*control*/ 
     int partidos_jugados;
     int partidos_ganados;
     int partidos_empatados;
@@ -56,9 +56,8 @@ void cargar_grupo(Equipo *equipo,char grupo){
     (*equipo).grupo=grupo;
 }
 
-void cargar_puntaje_actual (Equipo *equi, int cargado){
-    equi->puntaje_actual=cargado;
-    equi->resultados_fase[0].puntaje_parcial = cargado; /*carga automaticamente dentro de los resultados de la fase de grupo*/
+void cargar_puntaje_actual (Equipo *equi, int cargado) {
+    (*equi).puntaje_actual=cargado;
 }
 
 void cargar_goleador_struct (Equipo *equi, Artillero arti) {
@@ -71,10 +70,6 @@ void cargar_fase (Equipo *equi, int fase_actual) {
 
 void cargar_resultados_fase (Equipo *equi, int fase, Resultados cantidades) {
     (*equi).resultados_fase[fase]=cantidades;
-}
-
-void cargar_resultados_fase_puntaje_parcial(Equipo *equi, int fase_del_equipo, int puntaje_parcial_intro){
-    equi->resultados_fase[fase_del_equipo].puntaje_parcial = puntaje_parcial_intro;
 }
 
 void cargar_partidos_jugados (Equipo *equi, int cant_jugados) {
@@ -105,15 +100,14 @@ void init_equipo(Equipo *equipo_intro){
     }
     equipo_intro->fecha_actualizada=undef_fecha;
     
-}   
+}  
 
 /*AC� TERMINAN LAS FUNCIONES DEL CARGAR-------------------------------------------------------------------------------*/
 
 /*AC� EMPIEZAN LAS FUNCIONES DE MODIFICAR CAMPOS------------------------------------------------------------------------*/
 
 void modificar_puntaje_actual (Equipo *equi, int cargado) {
-    equi->puntaje_actual=cargado;
-    equi->resultados_fase[0].puntaje_parcial = cargado; /*carga automaticamente dentro de los resultados de la fase de grupo*/
+    (*equi).puntaje_actual=cargado;
 }
 
 void modificar_fase_goleador (Equipo *equi, Artillero arti) {
@@ -164,27 +158,27 @@ void modificar_partidos_empatados (Equipo *equi, int cant_empatados) {
 /*AC� EMPIEZAN LOS MOSTRAR TINTY NASTY*/
 
 char* mostrar_pais(Equipo pais){
-    char* s1=(char*)malloc(sizeof(char)*strlen(pais.pais));
-    strcpy (s1, pais.pais);
-    return s1;
-    free((void*)s1);
+	char* s1=(char*)malloc(sizeof(char)*strlen(pais.pais));
+	strcpy (s1, pais.pais);
+	return s1;
+	free((void*)s1);
 }
 char* mostrar_dt(Equipo pais){
-    char* s1=(char*)malloc(sizeof(char)*strlen(pais.dt));
-    strcpy (s1, pais.dt);
-    return s1;
-    free((void*)s1);
+	char* s1=(char*)malloc(sizeof(char)*strlen(pais.dt));
+	strcpy (s1, pais.dt);
+	return s1;
+	free((void*)s1);
 }
 
 char* mostrar_capitan(Equipo pais){
-    char* s1=(char*)malloc(sizeof(char)*strlen(pais.capitan));
-    strcpy (s1, pais.capitan);
-    return s1;
-    free((void*)s1);
+	char* s1=(char*)malloc(sizeof(char)*strlen(pais.capitan));
+	strcpy (s1, pais.capitan);
+	return s1;
+	free((void*)s1);
 }
 
 char mostrar_grupo(Equipo pais){
-    return pais.grupo;
+	return pais.grupo;
 }
 
 int mostrar_puntaje_actual(Equipo pais){
@@ -192,26 +186,26 @@ int mostrar_puntaje_actual(Equipo pais){
 }
 
 Artillero mostrar_goleador_struct(Equipo pais){
-    return pais.goleador;
+	return pais.goleador;
 }
 
 char* mostrar_goleador_apellido(Equipo pais){
     char* s1=(char*)malloc(sizeof(char)*strlen(pais.goleador.apellido));
-    strcpy (s1, pais.goleador.apellido);
-    return s1;
-    free((void*)s1);
+	strcpy (s1, pais.goleador.apellido);
+	return s1;
+	free((void*)s1);
 }
 
 int mostrar_goleador_goles(Equipo pais){
-    return pais.goleador.goles;
+	return pais.goleador.goles;
 }
 
 int mostrar_fase(Equipo pais){
-    return pais.fase;
+	return pais.fase;
 }
 
-Resultados mostrar_resultados_fase_struct(Equipo pais, int opcion){
-    return pais.resultados_fase[opcion];
+Resultados mostrar_resultados_fase(Equipo pais, int opcion){
+	return pais.resultados_fase[opcion];
 }
 
 int mostrar_resultados_fase_gfav(Equipo pais, int opcion){
@@ -227,19 +221,19 @@ int mostrar_resultados_fase_punt_parcial(Equipo pais, int opcion){
 }
 
 Fecha mostrar_fecha_actualizada(Equipo pais){
-    return pais.fecha_actualizada;
+	return pais.fecha_actualizada;
 }
 
 int mostrar_partidos_jugados(Equipo pais){
-    return pais.partidos_jugados;
+	return pais.partidos_jugados;
 }
 
 int mostrar_partidos_ganados(Equipo pais){
-    return pais.partidos_ganados;
+	return pais.partidos_ganados;
 }
 
 int mostrar_partidos_empatados(Equipo pais){
-    return pais.partidos_empatados;
+	return pais.partidos_empatados;
 }
 
 
@@ -247,10 +241,10 @@ int mostrar_partidos_empatados(Equipo pais){
  COSAS QUE SIRVEN PERO NO AHORA ------------------------------------------------------
 
 char* dt_mostrar(Equipo pais){
-    char s1=(char)malloc(strlen(pais.dt));
-    strcpy (s1, pais.dt);
-    return s1;
-    free((void*)s1);
+	char s1=(char)malloc(strlen(pais.dt));
+	strcpy (s1, pais.dt);
+	return s1;
+	free((void*)s1);
 }
 
 void cargar_goleador (Equipo *equi, char ape, int cant_goles) {
