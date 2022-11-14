@@ -163,6 +163,7 @@ char* mostrar_pais(Equipo pais){
 	return s1;
 	free((void*)s1);
 }
+
 char* mostrar_dt(Equipo pais){
 	char* s1=(char*)malloc(sizeof(char)*strlen(pais.dt));
 	strcpy (s1, pais.dt);
@@ -253,5 +254,4 @@ void cargar_goleador (Equipo *equi, char ape, int cant_goles) {
 }*/
 
 #endif // EQUIPOS_H_INCLUDED
-
 
