@@ -225,6 +225,18 @@ Fecha mostrar_fecha_actualizada(Equipo pais){
 	return pais.fecha_actualizada;
 }
 
+int mostrar_fecha_actualizada_dia(Equipo pais){
+	return pais.fecha_actualizada.dia;
+}
+
+int mostrar_fecha_actualizada_mes(Equipo pais){
+	return pais.fecha_actualizada.mes;
+}
+
+int mostrar_fecha_actualizada_anio(Equipo pais){
+	return pais.fecha_actualizada.anio;
+}
+
 int mostrar_partidos_jugados(Equipo pais){
 	return pais.partidos_jugados;
 }
@@ -254,4 +266,3 @@ void cargar_goleador (Equipo *equi, char ape, int cant_goles) {
 }*/
 
 #endif // EQUIPOS_H_INCLUDED
-
