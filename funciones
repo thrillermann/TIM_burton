@@ -19,3 +19,85 @@ void mostrar_equipos_ordenados (LISTA *conj_selecciones,int puntos){ // funcion 
         }
     }
 }
+
+void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
+    Equipo equipo;
+    init_equipo(&equipo);
+    time_t tiempo;
+    struct tm *mitiempo;
+    char pais_ing[pais_nomb_max], dt_ing[dt_nomb_max], capitan_ing[cap_nomb_max], grupo_ing;
+    int puntaje_actual_ing, fase_ing, continuar=1, resp_check=0, success;
+    while(continuar!=0){
+        system("cls");
+        printf("\n # # #   C A R G A R   S E L E C C I O N E S   # # #\n");
+
+        time(&tiempo);
+        mitiempo=localtime(&tiempo);
+        cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
+
+        printf("\n + Ingrese la seleccion que desea insertar: ");
+        fflush(stdin);
+        scanf("%[^\n]s", pais_ing);
+        cargar_pais(&equipo, pais_ing);
+
+        printf("\n + Apellido y nombre del dt: ");
+        fflush(stdin);
+        scanf("%[^\n]s", dt_ing);
+        cargar_dt(&equipo, dt_ing);
+
+        printf("\n + Apellido del capitan de equipo: ");
+        fflush(stdin);
+        scanf("%s", capitan_ing);
+        cargar_capitan(&equipo, capitan_ing);
+
+        printf("\n + Grupo correspondiente (A,B,C,D,E,F,G,H): ");
+        getc(stdin);
+        scanf("%c", &grupo_ing);
+        while(grupo_ing<65 || grupo_ing>72){
+            printf("\n\a # Respuesta invalida...");
+            printf("\n + Grupo correspondiente (A,B,C,D,E,F,G,H): ");
+            getc(stdin);
+            scanf("%c", &grupo_ing);
+        }
+        cargar_grupo(&equipo, grupo_ing);
+
+        printf("\n + Ingrese el puntaje actual del equipo: ");
+        resp_check = scanf("%d", &puntaje_actual_ing);
+        while(puntaje_actual_ing<0 || puntaje_actual_ing>9 || 1 != resp_check){ //* 1 != resp_check es para denegar los caracteres*//
+            fflush(stdin);
+            printf("\n\a # Respuesta invalida...");
+            printf("\n + Ingrese el puntaje actual del equipo: ");
+            resp_check = scanf("%d", &puntaje_actual_ing);
+        }
+        cargar_puntaje_actual(&equipo, puntaje_actual_ing);
+
+        printf("\n + Fase actual de la seleccion: ");
+        printf("\n\n\t (0) = Fase de grupos, (1) = 8avos de final, (2) = 4tos de final, (3) Semifinal, (4) = Final\n");
+        printf("\n + Resp: ");
+        resp_check = scanf("%d", &fase_ing);
+        while (fase_ing<0 || fase_ing>4 || 1 != resp_check){
+            fflush(stdin);
+            printf("\n\a # Respuesta invalida...");
+            printf("\n + Fase actual de la seleccion: ");
+            printf("\n\n\t (0) = Fase de grupos, (1) = 8avos de final, (2) = 4tos de final, (3) Semifinal, (4) = Final\n");
+            printf("\n + Resp: ");
+            resp_check = scanf("%d", &fase_ing);
+        }
+        cargar_fase(&equipo, fase_ing);
+
+        insertar(conj_selecciones, equipo);
+
+        system("cls");
+        printf("\a # Desea ingresar otro equipo?\n\n\t(1) = si\t(0) = no");
+        printf("\n\n + Resp: ");
+        resp_check = scanf("%d", &continuar);
+        while (continuar<0 || continuar>1 || 1 != resp_check){
+                fflush(stdin);
+                printf("\n\a # Respuesta invalida...");
+                printf("\n\a # Desea ingresar otro equipo?\n\n\t(1) = si\t(0) = no");
+                printf("\n\n + Resp: ");
+                resp_check = scanf("%d", &continuar);
+        }
+
+    }
+}
