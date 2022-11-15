@@ -131,6 +131,14 @@ void modificar_fase_goleador (Equipo *equi, Artillero arti) {
     (*equi).goleador=arti;
 }
 
+void modificar_goleador_nombre (Equipo *equi, char arti[]) {
+    strcpy((*equi).goleador.apellido,arti);
+}
+
+void modificar_goleador_goles(Equipo *equi, int gol){
+    (*equi).goleador.goles = gol;
+}
+
 void modificar_fase (Equipo *equi, int fase_actual) {
     (*equi).fase=fase_actual;
 }
