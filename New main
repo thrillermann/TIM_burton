@@ -297,3 +297,18 @@ void cargar_goleadores(LISTA *conj_selecciones){
     fflush(stdin);
     getchar();
 }
+
+
+void print_selecciones_ord_x_ptos(LISTA conj_selecciones, int pts_max){
+    if(fuera(conj_selecciones)!=1){
+        if(mostrar_puntaje_actual(muestro(conj_selecciones))==pts_max){
+            printf("\n + Pais: %s, %d pto/s", mostrar_pais(muestro(conj_selecciones)), mostrar_puntaje_actual(muestro(conj_selecciones)));
+        }
+        avanzar(&conj_selecciones);
+        print_selecciones_ord_x_ptos(conj_selecciones, pts_max);
+    }
+    else{
+        reset(&conj_selecciones);
+        print_selecciones_ord_x_ptos(conj_selecciones, pts_max-1);
+    }
+}
