@@ -10,6 +10,10 @@
 int main(){
     LISTA conj_selecciones; 
     init(&conj_selecciones);
+
+    time_t tiempo;
+    struct tm *mitiempo;
+
     int fase=0; int resp; int salir=0;
     char pais_ing[pais_nomb_max];
 
@@ -28,7 +32,8 @@ int main(){
         printf("\n(10) Mostrar goleadores por cantidad de goles");
         printf("\n(11) Exportar resultados de fase de una seleccion");
         printf("\n(12) Importar seleccion");
-        printf("\n(13) Salir");
+        printf("\n(13) Cargar goleadores");
+        printf("\n(14) Salir");
         printf("\n - Resp: ");
         scanf("%d", &resp);
 
@@ -96,7 +101,7 @@ int main(){
                 break;
             }
             case (7):{
-                printf("\n en mantenimiento..."); break;
+                print_fechas_de_actualizacion(conj_selecciones); break;
             }
             case (8):{
                 printf("\n Ingrese la fase: ");
@@ -105,10 +110,10 @@ int main(){
                 break;
             }
             case (9):{
-                mostrar_goleadores_ord_x_pais(conj_selecciones); break;
+                print_goleadores_ord_x_pais(conj_selecciones); break;
             }
             case (10):{
-                mostrar_goleadores_ord_x_goles(&conj_selecciones); break;
+                print_goleadores_ord_x_goles(conj_selecciones); break;
             }
             case (11):{
                 printf("\n Ingrese el nombre de la seleccion: ");
@@ -129,6 +134,21 @@ int main(){
                 importar_seleccion(&conj_selecciones); break;
             }
             case (13):{
+                printf("\n Ingrese el nombre de la seleccion del goleador: ");
+                fflush(stdin);
+                scanf("%[^\n]s", pais_ing);
+                if (buscar_pais_en_lista(&conj_selecciones, pais_ing)!=1){
+                    printf("\n no se encontro...");
+                    printf("\n Pulse para volver al menu...");
+                    fflush(stdin);
+                    getchar();
+                }
+                else{
+                    cargar_goleadores(&conj_selecciones);
+                }
+                break;
+            }
+            case (14):{
                 exit(1);
             }
         }
@@ -151,19 +171,20 @@ int buscar_pais_en_lista(LISTA *conj_selecciones, char seleccion_buscada[]){ //*
 void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
     Equipo equipo;
     init_equipo(&equipo);
-    time_t tiempo;
-    struct tm *mitiempo;
-    
     char pais_ing[pais_nomb_max], dt_ing[dt_nomb_max], capitan_ing[cap_nomb_max], grupo_ing;
     int puntaje_actual_ing, fase_ing, continuar=1, resp_check=0, success;
+
+    time_t tiempo;
+    struct tm *mitiempo;
+
+    time(&tiempo);
+    mitiempo=localtime(&tiempo);
+    cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
+
     while(continuar!=0){
         system("cls");
         printf("\n # # #   C A R G A R   S E L E C C I O N E S   # # #\n");
-        
-        time(&tiempo);
-        mitiempo=localtime(&tiempo);
-        cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
-        
+
         printf("\n + Ingrese la seleccion que desea insertar: ");
         fflush(stdin);
         scanf("%[^\n]s", pais_ing);
@@ -229,6 +250,23 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
         }
 
     }
+}
+
+void cargar_goleadores(LISTA *conj_selecciones){
+    Artillero goleador_ing;
+    system("cls");
+    printf("\n # # #   C A R G A R   G O L E A D O R E S   # # #\n");
+    printf("\n - Ingrese el apellido del goleador: ");
+    fflush(stdin);
+    scanf("%[^\n]s", goleador_ing.apellido);
+    printf("\n - Ingrese el numero de goles anotados: ");
+    scanf("%d", &goleador_ing.goles);
+
+    cargar_goleador_struct(&conj_selecciones->cur->seleccion, goleador_ing);
+
+    printf("\n\a # Datos cargados, pulse para volver al menu...");
+    fflush(stdin);
+    getchar();
 }
 
 void print_seleccion(LISTA lista_equipos){ //* funcion c*//
@@ -316,7 +354,7 @@ void print_selecciones_x_fase(LISTA conj_selecciones, int fase_ing){ /*funcion d
     reset(&conj_selecciones);
 }
 
-void mostrar_goleadores_ord_x_pais(LISTA conj_selecciones){ /* funcion e...   A=65 - Z=90 y a=97 - z=122,   a-A=32*... le falta amor, no anda todavia...*/  
+void print_goleadores_ord_x_pais(LISTA conj_selecciones){ /* funcion e...   A=65 - Z=90 y a=97 - z=122,   a-A=32*... le falta amor, no anda todavia...*/  
     int cant_goleadores=0, i;
     reset(&conj_selecciones);
 
@@ -343,32 +381,66 @@ void mostrar_goleadores_ord_x_pais(LISTA conj_selecciones){ /* funcion e...   A=
     reset(&conj_selecciones);
 }
 
-void mostrar_goleadores_ord_x_goles(LISTA *conj_selecciones){
-    int max_goles=0;
-    reset(conj_selecciones);
-    printf("\n 1er control");
+void print_goleadores_ord_x_goles(LISTA conj_selecciones){
+    int max_goles=0, i;
+    reset(&conj_selecciones);
 
-    while(conj_selecciones->cur->ps != NULL){
-        if ((conj_selecciones->cur->seleccion.goleador.goles) >= (max_goles)){
-            max_goles = conj_selecciones->cur->seleccion.goleador.goles;
+    system("cls");
+    printf("\n\a # # #   L I S T A   D E   G O L E A D O R E S   # # #\n");
+
+    while(fuera(conj_selecciones) != 1){
+        if ((conj_selecciones.cur->seleccion.goleador.goles) >= (max_goles)){
+            max_goles = conj_selecciones.cur->seleccion.goleador.goles;
+        }
+        avanzar(&conj_selecciones);
+    }
+
+    if (max_goles==0){
+        printf("\n - No hay goleadores...");
+    }
+
+    else{
+        for(i=max_goles; i>0; --i){
+            reset(&conj_selecciones);
+            while(fuera(conj_selecciones) != 1){
+                if (mostrar_goleador_goles(conj_selecciones.cur->seleccion) == i){
+                    printf("\n + %s, %d gol/es", mostrar_goleador_apellido(conj_selecciones.cur->seleccion), mostrar_goleador_goles(conj_selecciones.cur->seleccion));
+                }
+            avanzar(&conj_selecciones);
+            }
         }
     }
 
-    printf("\n sapee");
+    printf("\n - Pulse una tecla para volver al menu...");
+    fflush(stdin);
+    getchar();
+
+}
+
+void print_fechas_de_actualizacion(LISTA conj_selecciones){
+    reset(&conj_selecciones);
+    system("cls");
+    printf("\n # # #   L I S T A D O   D E   A C T U A L I Z A C I O N E S   # # #\n");
+    while (fuera(conj_selecciones)!=1){
+        printf("\n + %s, ", mostrar_pais(conj_selecciones.cur->seleccion));
+        printf("%d/%d/%d\n", mostrar_fecha_actualizada_dia(conj_selecciones.cur->seleccion), mostrar_fecha_actualizada_mes(conj_selecciones.cur->seleccion), mostrar_fecha_actualizada_anio(conj_selecciones.cur->seleccion));
+        avanzar(&conj_selecciones);
+    }
+    printf("\n Pulse para volver al menu...");
+    fflush(stdin);
+    getchar();
 }
 
 void mod_pts_y_partJGE(LISTA *conj_selecciones){ /*funcion g... en la invocacion se le pasa la lista con el cursor con la seleccion que se busco*/
     int pts_fase_grupos, p_jugados, p_ganados, p_empatados, resp_check;
-    
-    Equipo equipo;
+
     time_t tiempo;
     struct tm *mitiempo;
 
     time(&tiempo);
     mitiempo=localtime(&tiempo);
-    cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
+    cargar_fecha(&conj_selecciones->cur->seleccion, mitiempo->tm_mday, mitiempo->tm_mon, mitiempo->tm_year+1900);
 
-    
     system("cls");
     printf("\n # # #   M O D I F I C A R   P U N T O S   Y   P A R T I D O S   # # #\n");
     printf("\n # Pais: %s", mostrar_pais(conj_selecciones->cur->seleccion));
@@ -451,16 +523,14 @@ void mod_pts_y_partJGE(LISTA *conj_selecciones){ /*funcion g... en la invocacion
 
 void mod_fase_y_estadisticas(LISTA *conj_selecciones){ /*funcion i, en la invocacion se le pasa la lista con el cursor con la seleccion que se busco*/
     int datos_ing, cant_fases_avanzadas, p_jugados, p_ganados, p_empatados, resp_check;
-    
-    Equipo equipo;
+
     time_t tiempo;
     struct tm *mitiempo;
 
     time(&tiempo);
     mitiempo=localtime(&tiempo);
-    cargar_fecha(&equipo,mitiempo->tm_mday,mitiempo->tm_mon,mitiempo->tm_year+1900);
+    cargar_fecha(&conj_selecciones->cur->seleccion, mitiempo->tm_mday,mitiempo->tm_mon, mitiempo->tm_year+1900);
 
-    
     system("cls");
     printf("\n # # #   M O D I F I C A C I O N  D E  F A S E   # # #\n");
     printf("\n # Pais: %s", mostrar_pais(conj_selecciones->cur->seleccion));
@@ -672,6 +742,8 @@ void exportar_resultados_fase(LISTA conj_selecciones){
     printf("\n # # #   E X P O R T A R   R E S U L T A D O S   D E   F A S E   # # #\n");
 
     seleccion_resultados_export = fopen(nombre_del_archivo, "w");
+
+    fprintf(seleccion_resultados_export, " # Seleccion: %s...\n", mostrar_pais(conj_selecciones.cur->seleccion));
     for (i=0; i<=mostrar_fase(conj_selecciones.cur->seleccion); ++i){
         switch(i){
             case (0):{
