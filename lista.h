@@ -21,7 +21,7 @@ void init(LISTA *lista_ing) {
 }
 
 int is_empty(LISTA lista_ing){
-    if (lista_ing.cur == lista_ing.curaux) return 1;
+    if (lista_ing.acc == NULL) return 1;
     else return 0;
 }
 
@@ -40,7 +40,7 @@ int insertar(LISTA *lista_ing, Equipo equipo_ing) {
         return 0;
     }
     else{
-        NODO *aux1;
+        NODO *aux1, *aux2;
         NODO *nuevo_nodo=(NODO*)malloc(sizeof(NODO));
 
         nuevo_nodo->seleccion = equipo_ing;
@@ -52,13 +52,13 @@ int insertar(LISTA *lista_ing, Equipo equipo_ing) {
             lista_ing->curaux = nuevo_nodo;
         }
         else {
-            aux1 = lista_ing->cur;
-
             lista_ing->cur->siguiente = nuevo_nodo;
-            lista_ing->curaux->siguiente = aux1;
 
-            lista_ing->cur = nuevo_nodo;
-            lista_ing->curaux = aux1;
+            aux1 = lista_ing->cur->siguiente;
+            aux2 = lista_ing->cur;
+
+            lista_ing->cur = aux1;
+            lista_ing->curaux = aux2;
 
         }
         return 1;
