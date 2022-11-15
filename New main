@@ -312,3 +312,53 @@ void print_selecciones_ord_x_ptos(LISTA conj_selecciones, int pts_max){
         print_selecciones_ord_x_ptos(conj_selecciones, pts_max-1);
     }
 }
+
+print_goleadores_ord_x_goles(LISTA conj_selecciones){
+    int max_goles=0, i;
+    reset(&conj_selecciones);
+
+    system("cls");
+    printf("\n\a # # #   L I S T A   D E   G O L E A D O R E S   # # #\n");
+
+    while(fuera(conj_selecciones) != 1){
+        if ((mostrar_goleador_goles(muestro(conj_selecciones))) >= (max_goles)){
+            max_goles = (mostrar_goleador_goles(muestro(conj_selecciones)));
+        }
+        avanzar(&conj_selecciones);
+    }
+
+    if (max_goles==0){
+        printf("\n - No hay goleadores...");
+    }
+
+    else{
+        for(i=max_goles; i>0; --i){
+            reset(&conj_selecciones);
+            while(fuera(conj_selecciones) != 1){
+                if (mostrar_goleador_goles(muestro(conj_selecciones)) == i){
+                    printf("\n + %s, %d gol/es", mostrar_goleador_apellido(muestro(conj_selecciones)), mostrar_goleador_goles(muestro(conj_selecciones)));
+                }
+            avanzar(&conj_selecciones);
+            }
+        }
+    }
+
+    printf("\n - Pulse una tecla para volver al menu...");
+    fflush(stdin);
+    getchar();
+
+}
+
+void print_fechas_de_actualizacion(LISTA conj_selecciones){
+    reset(&conj_selecciones);
+    system("cls");
+    printf("\n # # #   L I S T A D O   D E   A C T U A L I Z A C I O N E S   # # #\n");
+    while (fuera(conj_selecciones)!=1){
+        printf("\n + %s, ", mostrar_pais(muestro(conj_selecciones)));
+        printf("%d/%d/%d\n", mostrar_fecha_actualizada_dia(muestro(conj_selecciones)), mostrar_fecha_actualizada_mes(muestro(conj_selecciones)), mostrar_fecha_actualizada_anio(muestro(conj_selecciones)));
+        avanzar(&conj_selecciones);
+    }
+    printf("\n Pulse para volver al menu...");
+    fflush(stdin);
+    getchar();
+}
