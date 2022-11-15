@@ -5,8 +5,7 @@
 
 typedef struct nod{
     Equipo seleccion;
-    struct nod *ps;
-    struct nod *ant;
+    struct nod *siguiente;
 } NODO;
 
 typedef struct {
@@ -15,7 +14,6 @@ typedef struct {
     NODO *curaux;
 } LISTA;
 
-
 void init(LISTA *lista_ing) {
     lista_ing->acc=NULL;
     lista_ing->cur=NULL;
@@ -23,8 +21,18 @@ void init(LISTA *lista_ing) {
 }
 
 int is_empty(LISTA lista_ing){
-    if (lista_ing.acc == NULL) return 1;
+    if (lista_ing.cur == lista_ing.curaux) return 1;
     else return 0;
+}
+
+int is_full (LISTA lista_ing) {
+	Equipo *aux;
+	aux=(Equipo*)malloc(sizeof(Equipo));
+	if (aux==NULL) {
+	return 1;
+	} else {
+	return 0;
+	}
 }
 
 int insertar(LISTA *lista_ing, Equipo equipo_ing) {
@@ -32,47 +40,46 @@ int insertar(LISTA *lista_ing, Equipo equipo_ing) {
         return 0;
     }
     else{
-        NODO *aux1, *aux2;
+        NODO *aux1;
         NODO *nuevo_nodo=(NODO*)malloc(sizeof(NODO));
 
         nuevo_nodo->seleccion = equipo_ing;
-        nuevo_nodo->ps = NULL;
-        nuevo_nodo->ant = NULL;
+        nuevo_nodo->siguiente = NULL;
 
         if (is_empty(*lista_ing)==1) {
             lista_ing->acc = nuevo_nodo;
             lista_ing->cur = nuevo_nodo;
-            lista_ing->curaux = NULL;
-        } 
+            lista_ing->curaux = nuevo_nodo;
+        }
         else {
-            lista_ing->cur->ps=nuevo_nodo;
-            nuevo_nodo->ant = lista_ing->cur;
+            aux1 = lista_ing->cur;
 
-            aux1 = lista_ing->cur->ps;
-            aux2 = lista_ing->cur;
+            lista_ing->cur->siguiente = nuevo_nodo;
+            lista_ing->curaux->siguiente = aux1;
 
-            lista_ing->cur = aux1;
-            lista_ing->curaux = aux2;
+            lista_ing->cur = nuevo_nodo;
+            lista_ing->curaux = aux1;
+
         }
         return 1;
     }
-    
+
 }
 
 int suprimir (LISTA *lista_ing) {
     if (is_empty(*lista_ing)==1) {
         return 0;
-    }  
+    }
     else {
-        NODO *aux1, *aux2;
-
-        aux1 = lista_ing->curaux;
-        aux2 = lista_ing->curaux->ant;
+        NODO *aux1;
+        aux1 = lista_ing->cur->siguiente;
+        
+        lista_ing->curaux->siguiente = aux1;
 
         free((void*)(lista_ing->cur));
 
         lista_ing->cur = aux1;
-        lista_ing->curaux = aux2;
+
         return 1;
     }
 }
@@ -83,9 +90,12 @@ void reset (LISTA *lista_ing) {
 }
 
 void avanzar (LISTA *lista_ing) {
-    lista_ing->cur = lista_ing->cur->ps;
-    lista_ing->curaux = lista_ing->curaux->ps;
+    NODO *aux1, *aux2;
+    aux1 = lista_ing->cur;
+    aux2 = lista_ing->cur->siguiente;
 
+    lista_ing->curaux = aux1;
+    lista_ing->cur = aux2;
 }
 
 int fuera (LISTA lista_ing) {
@@ -93,25 +103,9 @@ int fuera (LISTA lista_ing) {
     else return 0;
 }
 
-
-
-
-
-
-
-Equipo muestro (LISTA nanai) {
-    return nanai.cur->seleccion;
+Equipo muestro (LISTA lista_ing) {
+    return lista_ing.cur->seleccion;
 }
 
-
-int is_full (LISTA equinihno) {
-	Equipo *aux;
-	aux=(Equipo*)malloc(sizeof(Equipo));
-	if (aux==NULL) {
-	return 1;
-	} else {
-	return 0;
-	}
-}
 #endif // LISTA_EQUIPO_H_INCLUDED
 
