@@ -282,3 +282,6 @@ void cargar_goleador (Equipo *equi, char ape, int cant_goles) {
 }*/
 
 #endif // EQUIPOS_H_INCLUDED
+
+
+
