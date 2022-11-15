@@ -14,32 +14,35 @@ int main(){
     time_t tiempo;
     struct tm *mitiempo;
 
-    int fase=0; int resp; int salir=0, check_resp;
+    int fase=0; int resp; int salir=0, check_resp, continente_ing;
     char pais_ing[pais_nomb_max];
 
     while (salir!=1){
         system("cls");
         printf("\n # # #  M E N U  # # #\n");
-        printf("\n(1) Cargar paises");
-        printf("\n(2) Modificar puntaje y cant partidos ganados/empatados pais");
-        printf("\n(3) Borrar seleccion");
-        printf("\n(4) Actualizar fase y actualizar la anterior pais");
-        printf("\n(5) Buscar y mostrar datos de un pais");
-        printf("\n(6) Mostrar todas las selecciones ordenadas por puntaje");
-        printf("\n(7) Mostrar listado de actualizaciones de paises");
-        printf("\n(8) Mostrar selecciones por fase");
-        printf("\n(9) Mostrar goleadores por orden alfabetico");
-        printf("\n(10) Mostrar goleadores por cantidad de goles");
-        printf("\n(11) Exportar resultados de fase de una seleccion");
-        printf("\n(12) Importar seleccion");
-        printf("\n(13) Cargar goleadores");
-        printf("\n(14) Salir");
-        printf("\n - Resp: ");
+        printf("\n - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+        printf("\n  (1) Cargar paises");
+        printf("\n  (2) Modificar puntaje, partidos ganados/empatados por pais");
+        printf("\n  (3) Borrar seleccion");
+        printf("\n  (4) Actualizar fase y actualizar la anterior pais");
+        printf("\n - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+        printf("\n  (5) Buscar y mostrar datos de un pais");
+        printf("\n  (6) Mostrar todas las selecciones ordenadas por puntaje");
+        printf("\n  (7) Mostrar listado de actualizaciones de paises");
+        printf("\n  (8) Mostrar selecciones por fase");
+        printf("\n  (9) Mostrar goleadores por orden alfabetico");
+        printf("\n  (10) Mostrar goleadores por cantidad de goles");
+        printf("\n - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+        printf("\n  (11) Exportar resultados de fase segun un continente");
+        printf("\n  (12) Importar seleccion");
+        printf("\n  (13) Cargar goleadores");
+        printf("\n  (14) Salir");
+        printf("\n\n + Resp: ");
         check_resp = scanf("%d", &resp);
         while ((resp>14 || resp<0) || check_resp!=1){
             fflush(stdin);
             printf("\n\a # Respuesta invalida... ");
-            printf("\n\n - Resp: ");
+            printf("\n\n + Resp: ");
             check_resp = scanf("%d", &resp);
         }
 
@@ -48,7 +51,10 @@ int main(){
                 cargar_datos(&conj_selecciones); 
                 break;
             }
+
             case (2):{
+                system("cls");
+                printf("\n # # #   M O D I F I C A R   P U N T O S   Y   P A R T I D O S   # # #\n");
                 printf("\n Ingrese el nombre de la seleccion: ");
                 fflush(stdin);
                 scanf("%[^\n]s", pais_ing);
@@ -141,18 +147,11 @@ int main(){
                 print_goleadores_ord_x_goles(conj_selecciones); break;
             }
             case (11):{
-                printf("\n Ingrese el nombre de la seleccion: ");
+                printf("\n seleccione el continente: ");
                 fflush(stdin);
-                scanf("%[^\n]s", pais_ing);
-                if (buscar_pais_en_lista(&conj_selecciones, pais_ing)!=1){
-                    printf("\n no se encontro...");
-                    printf("\n Pulse para volver al menu...");
-                    fflush(stdin);
-                    getchar();
-                }
-                else{
-                    exportar_resultados_fase(conj_selecciones);
-                }
+                scanf("%d", &continente_ing);
+
+                exportar_resultados_fase_x_continente(conj_selecciones, continente_ing);
                 break;
             }
             case (12):{
@@ -198,7 +197,7 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
     Equipo equipo;
     init_equipo(&equipo);
     char pais_ing[pais_nomb_max], dt_ing[dt_nomb_max], capitan_ing[cap_nomb_max], grupo_ing;
-    int puntaje_actual_ing, fase_ing, continuar=1, resp_check=0, success;
+    int continente_ing, puntaje_actual_ing, fase_ing, continuar=1, resp_check=0, success;
 
     time_t tiempo;
     struct tm *mitiempo;
@@ -215,6 +214,21 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
         fflush(stdin);
         scanf("%[^\n]s", pais_ing);
         cargar_pais(&equipo, pais_ing);
+
+        printf("\n + Ingrese el continente al que pertenece la seleccion: ");
+        printf("\n\n\t  (1) = Asia, (2) = America, (3) Africa, (4) = Europa, (5) = Oceania\n");
+        printf("\n + Resp: ");
+
+        resp_check = scanf("%d", &continente_ing);
+        while(continente_ing<1 || continente_ing>5 || 1 != resp_check){ //* 1 != resp_check es para denegar los caracteres*//
+            fflush(stdin);
+            printf("\n\a # Respuesta invalida...");
+            printf("\n + Ingrese el continente al que pertenece la seleccion: ");
+            printf("\n\n\t(1) = Asia, (2) = America, (3) Africa, (4) = Europa, (5) = Oceania\n");
+            printf("\n + Resp: ");
+            resp_check = scanf("%d", &continente_ing);
+        }
+        cargar_continente(&equipo, continente_ing);
 
         printf("\n + Apellido y nombre del dt: ");
         fflush(stdin);
@@ -288,7 +302,7 @@ void cargar_goleadores(LISTA *conj_selecciones){
     printf("\n - Ingrese el numero de goles anotados: ");
     scanf("%d", &goleador_ing.goles);
 
-    cargar_goleador_struct(mostrar_pais(muestro(*conj_selecciones)), goleador_ing);
+    cargar_goleador_struct(&conj_selecciones, goleador_ing);
     
 
     printf("\n\a # Datos cargados, pulse para volver al menu...");
@@ -303,6 +317,29 @@ void print_seleccion(LISTA lista_equipos){ //* funcion c*//
     system("cls");
     printf("\n # # #   R E S U L T A D O   # # #\n");
     printf("\n + Seleccion: %s", lista_equipos.cur->seleccion.pais);
+    
+    switch(lista_equipos.cur->seleccion.continente){
+        case (1):{
+            printf("\n + Continente: Asia");
+            break;
+        }
+        case (2):{
+            printf("\n + Continente: America");
+            break;
+        }
+        case (3):{
+            printf("\n + Continente: Africa");
+            break;
+        }
+        case (4):{
+            printf("\n + Continente: Europa");
+            break;
+        }
+        case (5):{
+            printf("\n + Continente: Oceania");
+        }
+    }
+    
     printf("\n + DT: %s", lista_equipos.cur->seleccion.dt);
     printf("\n + Capitan: %s", lista_equipos.cur->seleccion.capitan);
     printf("\n + Grupo: %c", lista_equipos.cur->seleccion.grupo);
@@ -759,94 +796,123 @@ void importar_seleccion(LISTA *conj_selecciones){ /*funcion m*/
     getchar();
 }
 
-void exportar_resultados_fase(LISTA conj_selecciones){
+void exportar_resultados_fase_x_continente(LISTA conj_selecciones, int continente_ing){
     FILE *seleccion_resultados_export;
     char nombre_del_archivo[pais_nomb_max];
     int i;
 
-    strcpy(nombre_del_archivo, mostrar_pais(conj_selecciones.cur->seleccion));
+    switch(continente_ing){
+        case (1):{
+            strcpy(nombre_del_archivo, "ASIA");
+            break;
+        }
+        case (2):{
+            strcpy(nombre_del_archivo, "AMERICA");
+            break;
+        }
+        case (3):{
+            strcpy(nombre_del_archivo, "AFRICA");
+            break;
+        }
+        case (4):{
+            strcpy(nombre_del_archivo, "EUROPA");
+            break;
+        }
+        case (5):{
+            strcpy(nombre_del_archivo, "OCEANIA");
+            break;
+        }
+    }
+
     strcat(nombre_del_archivo,"_RESULTADOS_EXPORT.txt");
 
     system("cls");
     printf("\n # # #   E X P O R T A R   R E S U L T A D O S   D E   F A S E   # # #\n");
 
     seleccion_resultados_export = fopen(nombre_del_archivo, "w");
+    while(fuera(conj_selecciones)!=1){
+        if (conj_selecciones.cur->seleccion.continente == continente_ing){
+            fprintf(seleccion_resultados_export, " # Seleccion: %s...\n", mostrar_pais(conj_selecciones.cur->seleccion));
+            for (i=0; i<=mostrar_fase(conj_selecciones.cur->seleccion); ++i){
+                switch(i){
+                    case (0):{
+                        fprintf(seleccion_resultados_export, " * Fase: Grupos, ");
+                        fprintf(seleccion_resultados_export, "Pto/s: %d ", mostrar_puntaje_actual(conj_selecciones.cur->seleccion));
+                        fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                        fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                        break;
+                    }
+                    case (1):{
+                        fprintf(seleccion_resultados_export, " * Fase: 8avos, ");
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                            fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                        }
 
-    fprintf(seleccion_resultados_export, " # Seleccion: %s...\n", mostrar_pais(conj_selecciones.cur->seleccion));
-    for (i=0; i<=mostrar_fase(conj_selecciones.cur->seleccion); ++i){
-        switch(i){
-            case (0):{
-                fprintf(seleccion_resultados_export, " * Fase: Grupos, ");
-                fprintf(seleccion_resultados_export, "Pto/s: %d ", mostrar_puntaje_actual(conj_selecciones.cur->seleccion));
-                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
-                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
-                break;
-            }
-            case (1):{
-                fprintf(seleccion_resultados_export, " * Fase: 8avos, ");
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
-                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
-                }
-                
-                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
-                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
-                break;
-            }
-            case (2):{
-                fprintf(seleccion_resultados_export, " * Fase: 4tos, ");
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
-                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
-                }
+                        fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                        fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                        break;
+                    }
+                    case (2):{
+                        fprintf(seleccion_resultados_export, " * Fase: 4tos, ");
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                            fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                        }
 
-                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
-                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
-                break;
-            }
-            case (3):{
-                fprintf(seleccion_resultados_export, " * Fase: Semifinal, ");
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
-                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
-                }
+                        fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                        fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                        break;
+                    }
+                    case (3):{
+                        fprintf(seleccion_resultados_export, " * Fase: Semifinal, ");
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                            fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                        }
 
-                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
-                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
-                break;
-            }
-            case (4):{
-                fprintf(seleccion_resultados_export, " * Fase: Final, ");
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
-                    fprintf(seleccion_resultados_export, "Resultado: Gano, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
-                }
-                if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
-                    fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
-                }
+                        fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                        fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                        break;
+                    }
+                    case (4):{
+                        fprintf(seleccion_resultados_export, " * Fase: Final, ");
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==1){
+                            fprintf(seleccion_resultados_export, "Resultado: Gano, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==0){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Perdio, ");
+                        }
+                        if (mostrar_resultados_fase_punt_parcial(conj_selecciones.cur->seleccion, i)==2){ 
+                            fprintf(seleccion_resultados_export, "Resultado: Pendiente, ");
+                        }
 
-                fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
-                fprintf(seleccion_resultados_export, "GC: %d\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                        fprintf(seleccion_resultados_export, "GF: %d, ", mostrar_resultados_fase_gfav(conj_selecciones.cur->seleccion, i));
+                        fprintf(seleccion_resultados_export, "GC: %d\n\n", mostrar_resultados_fase_gcon(conj_selecciones.cur->seleccion, i));
+                    }
+                }
             }
+
         }
+        
+        avanzar(&conj_selecciones);
     }
+    
     fclose(seleccion_resultados_export);
 
     printf("\n - Los resultados se guardaron en el archivo \"%s\"", nombre_del_archivo);
@@ -854,7 +920,6 @@ void exportar_resultados_fase(LISTA conj_selecciones){
     fflush(stdin);
     getchar();
 
-    
 }
 
 void borrar_seleccion(LISTA *conj_selecciones){
