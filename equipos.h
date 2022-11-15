@@ -4,30 +4,6 @@
 #include <time.h>
 #include <string.h>
 
-/*el mundial empieza el 20 de noviembre y termina el 18 de diciembre*/
-
-typedef struct  {
-    char apellido[20];
-    int goles;
-}Artillero;
-
-typedef struct {
-    int goles_favor;
-    int goles_contra;
-    int puntaje_parcial; /*Si la fase> f.grupos, entonces 1=gano, 0=perdio, 2=pendiente*/
-}Resultados;
-
-typedef struct{
-    int anio, mes, dia;
-} Fecha;
-
-typedef struct {
-#ifndef EQUIPOS_H_INCLUDED
-#define EQUIPOS_H_INCLUDED
-
-#include <time.h>
-#include <string.h>
-
 typedef struct  {
     char apellido[20];
     int goles;
@@ -287,3 +263,6 @@ int mostrar_partidos_empatados(Equipo pais){
 }
 
 #endif // EQUIPOS_H_INCLUDED
+
+
+
