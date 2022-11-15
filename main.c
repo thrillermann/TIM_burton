@@ -70,6 +70,8 @@ int main(){
                 break;
             }
             case (3):{
+                system("cls");
+                printf("\n # # #   B O R R A R   S E L E C C I O N   # # #\n");
                 printf("\n Ingrese el nombre de la seleccion: ");
                 fflush(stdin);
                 scanf("%[^\n]s", pais_ing);
@@ -128,14 +130,20 @@ int main(){
                 print_fechas_de_actualizacion(conj_selecciones); break;
             }
             case (8):{
-                printf("\n Ingrese la fase: ");
+                system("cls");
+                printf("\n # # #   F A S E S   # # # ");
+                printf("\n # Ingrese la fase que desea visualizar: ");
+                printf("\n\n\t (0) = Fase de grupos, (1) = 8avos de final, (2) = 4tos de final, (3) Semifinal, (4) = Final\n");
+                printf("\n + Resp: ");
                 check_resp = scanf("%d", &fase);
-                                while ((fase>4 || fase<0) || check_resp!=1){
-                                    fflush(stdin);
-                                    printf("\n\a # Respuesta invalida... ");
-                                    printf("\n\n - Resp: ");
-                                    check_resp = scanf("%d", &fase);
-                                }
+                while (fase<0 || fase>4 || 1 != check_resp){
+                    fflush(stdin);
+                    printf("\n\a # Respuesta invalida...");
+                    printf("\n + Fase actual de la seleccion: ");
+                    printf("\n\n\t (0) = Fase de grupos, (1) = 8avos de final, (2) = 4tos de final, (3) Semifinal, (4) = Final\n");
+                    printf("\n + Resp: ");
+                    check_resp = scanf("%d", &fase);
+                }
 
                 print_selecciones_x_fase(conj_selecciones, fase); 
                 break;
@@ -147,10 +155,20 @@ int main(){
                 print_goleadores_ord_x_goles(conj_selecciones); break;
             }
             case (11):{
-                printf("\n seleccione el continente: ");
-                fflush(stdin);
-                scanf("%d", &continente_ing);
-
+                system("cls");
+                printf("\n # # #   E X P O R T A R   R E S U L T A D O S  # # #");
+                printf("\n + Ingrese el continente al que pertenece la seleccion: ");
+                printf("\n\n\t  (1) = Asia, (2) = America, (3) Africa, (4) = Europa, (5) = Oceania\n");
+                printf("\n + Resp: ");
+                check_resp = scanf("%d", &continente_ing);
+                while(continente_ing<1 || continente_ing>5 || 1 != check_resp){ //* 1 != resp_check es para denegar los caracteres*//
+                    fflush(stdin);
+                    printf("\n\a # Respuesta invalida...");
+                    printf("\n + Ingrese el continente al que pertenece la seleccion: ");
+                    printf("\n\n\t(1) = Asia, (2) = America, (3) Africa, (4) = Europa, (5) = Oceania\n");
+                    printf("\n + Resp: ");
+                    check_resp = scanf("%d", &continente_ing);
+                }
                 exportar_resultados_fase_x_continente(conj_selecciones, continente_ing);
                 break;
             }
@@ -158,6 +176,7 @@ int main(){
                 importar_seleccion(&conj_selecciones); break;
             }
             case (13):{
+
                 printf("\n Ingrese el nombre de la seleccion del goleador: ");
                 fflush(stdin);
                 scanf("%[^\n]s", pais_ing);
@@ -293,17 +312,20 @@ void cargar_datos(LISTA *conj_selecciones){ //* funcion a modificada*//
 }
 
 void cargar_goleadores(LISTA *conj_selecciones){
-    Artillero goleador_ing;
+    char apellido[100];
+    int gol;
     system("cls");
     printf("\n # # #   C A R G A R   G O L E A D O R E S   # # #\n");
     printf("\n - Ingrese el apellido del goleador: ");
     fflush(stdin);
-    scanf("%[^\n]s", goleador_ing.apellido);
+    scanf("%[^\n]s", apellido);
     printf("\n - Ingrese el numero de goles anotados: ");
-    scanf("%d", &goleador_ing.goles);
+    scanf("%d", &gol);
 
-    cargar_goleador_struct(&conj_selecciones, goleador_ing);
-    
+    Equipo equipo;
+    equipo = muestro(*conj_selecciones);
+    cargar_goleador_struct(&equipo, apellido, gol);
+    insertar(&*conj_selecciones,equipo);
 
     printf("\n\a # Datos cargados, pulse para volver al menu...");
     fflush(stdin);
