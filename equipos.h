@@ -77,8 +77,16 @@ void cargar_fase (Equipo *equi, int fase_actual) {
     (*equi).fase=fase_actual;
 }
 
-void cargar_resultados_fase (Equipo *equi, int fase, Resultados cantidades) {
-    (*equi).resultados_fase[fase]=cantidades;
+void cargar_resultados_fase_GF(Equipo *equi, int fase, int goles_a_favor_intro) {
+    equi->resultados_fase[fase].goles_favor = goles_a_favor_intro;
+}
+
+void cargar_resultados_fase_GC(Equipo *equi, int fase, int goles_en_contra_intro) {
+    equi->resultados_fase[fase].goles_contra = goles_en_contra_intro;
+}
+
+void cargar_resultados_fase_ptj(Equipo *equi, int fase, int ptj_intro) {
+    equi->resultados_fase[fase].puntaje_parcial = ptj_intro;
 }
 
 void cargar_partidos_jugados (Equipo *equi, int cant_jugados) {
